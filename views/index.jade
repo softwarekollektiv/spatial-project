@@ -10,6 +10,31 @@ body(onload='init()')
 
       map.setView(new L.LatLng(52, 13), 6);
       map.addLayer(osmLayer);
+      var addGeoJSONLayer = function(feature) {
+        var geojsonLayer = new L.GeoJSON();
+        geojsonLayer.on('featureparse', function(event){
+          event.layer.bindPopup(event.properties.name);
+          var geojsonLayer = new L.GeoJSON();
+          geojsonLayer.on('featureparse', function(event){
+            var latlng = event.layer._latlng;
+            event.layer.bindPopup("City center at: " + latlng.lat + ", "+latlng.lng);
+          });
+          geojsonLayer.addGeoJSON(event.properties.centroid);
+          map.addLayer(geojsonLayer);
+        });
+        geojsonLayer.addGeoJSON(feature);
+        map.addLayer(geojsonLayer);
+      }
+      $.getJSON('./api/cities/Berlin?callback=?', addGeoJSONLayer);
+      $.getJSON('./api/cities/London?callback=?', addGeoJSONLayer);
+      $.getJSON('./api/cities/Paris?callback=?', addGeoJSONLayer);
+      $.getJSON('./api/cities/Hamburg?callback=?', addGeoJSONLayer);
+      //$.getJSON('./api/cities/Berlin?translate=13,52&callback=?', addGeoJSONLayer);
+      ////$.getJSON('./api/cities/Hamburg?translate=13,52&callback=?', addGeoJSONLayer);
+      //$.getJSON('./api/cities/Frankfurt?translate=13,52&callback=?', addGeoJSONLayer);
+      //$.getJSON('./api/cities/Dresden?translate=13,52&callback=?', addGeoJSONLayer);
+      //$.getJSON('./api/cities?callback=?', addGeoJSONLayer);
+
 
     }
   #map

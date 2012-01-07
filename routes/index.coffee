@@ -7,9 +7,15 @@ exports.select = (req, res, next) ->
         map = {
             #  cent : 'ST_Transform(ST_Centroid(way),4326)',
             json : "ST_AsGeoJSON(ST_Translate(ST_Transform(way,4326),#{x}-ST_X(ST_Transform(ST_Centroid(way),4326)), #{y}-ST_Y(ST_Transform(ST_Centroid(way),4326))))"
+            name : "name"
+            centroid: "ST_AsGeoJSON(ST_Transform(ST_Centroid(way), 4326))"
         }
     else
-        map = { json: 'ST_AsGeoJSON(ST_Transform(way,4326))' }
+        map =
+          json: 'ST_AsGeoJSON(ST_Transform(way,4326))'
+          name: "name"
+          centroid: "ST_AsGeoJSON(ST_Transform(ST_Centroid(way), 4326))"
+
     req.sql = { select: map}
     req.sql.where = []
     next()
@@ -75,9 +81,15 @@ featureCollectionFromRows = (rows) ->
     list = []
     for row in rows
         geoJson = JSON.parse(row.json)
-        list.push { type: 'Feature', geometry: geoJson }
+        list.push(
+          type: "Feature"
+          geometry: geoJson
+          properties:
+            name: row.name
+            centroid: JSON.parse(row.centroid)
+        )
 
-    collection = {
-        type: 'FeatureCollection',
-        features: list
-    }
+    collection =
+      type: 'FeatureCollection',
+      features: list
+

@@ -13,7 +13,7 @@ body(onload='init()')
       var addGeoJSONLayer = function(feature) {
         var geojsonLayer = new L.GeoJSON();
         geojsonLayer.on('featureparse', function(event){
-          event.layer.bindPopup(event.properties.name);
+          event.layer.bindPopup(event.properties.name + "<br>Area: " + event.properties.area/1000/1000 + "km²");
           var geojsonLayer = new L.GeoJSON();
           geojsonLayer.on('featureparse', function(event){
             var latlng = event.layer._latlng;

@@ -1,2 +1,15 @@
-h1= title
-p Welcome to #{title}
+body(onload='init()')
+  script(type='text/javascript')
+    var init = function init() {
+
+      var map = new L.Map('map');
+      //base layer
+      var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      var osmAttribution = 'Map data copyright openstreetmap contributers';
+      var osmLayer = new L.TileLayer(osmUrl, {minZoom:0, maxZoom: 18, attribution: osmAttribution});
+
+      map.setView(new L.LatLng(52, 13), 6);
+      map.addLayer(osmLayer);
+
+    }
+  #map

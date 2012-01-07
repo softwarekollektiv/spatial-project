@@ -1,7 +1,7 @@
 #!/usr/bin/env coffee
 
 express = require "express"
-routes = require "./routes"
+r = routes = require "./routes"
 pg = require "pg"
 
 settings = require "./settings"
@@ -38,20 +38,17 @@ getPgClient = (req, res, next) ->
 
 app.get "/", routes.index
 
-app.get "/api/points", getPgClient, routes.points
+#app.get "/api/points", getPgClient, routes.points
+#app.get "/api/points/:id", getPgClient, routes.points
 
-app.get "/api/points/:id", getPgClient, routes.points
+app.get "/api/cities", getPgClient, r.select, r.from, r.whereBoundary, routes.cities
+app.get "/api/cities/:name", getPgClient, r.select, r.from, r.whereBoundary, r.whereName, routes.cities
 
-app.get "/api/cities", getPgClient, routes.cities
-app.get "/api/cities/:name", getPgClient, routes.cities
+#app.get "/api/ways", routes.ways
+#app.get "/api/ways/:id", routes.ways
 
-app.get "/api/ways", routes.ways
-
-app.get "/api/ways/:id", routes.ways
-
-app.get "/api/polygons", getPgClient, routes.polygons
-
-app.get "/api/polygons/:id", getPgClient, routes.polygons
+#app.get "/api/polygons", getPgClient, routes.polygons
+#app.get "/api/polygons/:id", getPgClient, routes.polygons
 
 app.listen 3000
 console.log "Express server listening on port %d in %s mode", app.address().port, app.settings.env

@@ -1,2 +1,3 @@
 settings.coffee
 node_modules
+*.swp

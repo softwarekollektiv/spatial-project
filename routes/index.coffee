@@ -6,7 +6,7 @@ exports.select = (req, res, next) ->
         [x,y] = req.query.translate.split(',')
         map = {
             #  cent : 'ST_Transform(ST_Centroid(way),4326)',
-            json : "ST_AsGeoJSON(ST_Transform(ST_Translate(way,#{x}-ST_X(ST_Transform(ST_Centroid(way),4326)), #{y}-ST_Y(ST_Transform(ST_Centroid(way),4326))),4326))"
+            json : "ST_AsGeoJSON(ST_Translate(ST_Transform(way,4326),#{x}-ST_X(ST_Transform(ST_Centroid(way),4326)), #{y}-ST_Y(ST_Transform(ST_Centroid(way),4326))))"
         }
     else
         map = { json: 'ST_AsGeoJSON(ST_Transform(way,4326))' }
@@ -64,6 +64,7 @@ exports.cities = (req, res, next) ->
         queryAndWrite buildQuery(req.sql), req , res, next
 
 queryAndWrite = (query,req,res,next) ->
+    console.log query
     req.client.query query, (error, results) ->
         if error
             next error

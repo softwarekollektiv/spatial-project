@@ -10,6 +10,7 @@ connectionString = ->
   "pg://#{settings.POSTGRES_USER}:#{settings.POSTGRES_PASSWORD}@#{settings.POSTGRES_HOST}:#{settings.POSTGRES_PORT}/#{settings.POSTGRES_DB}"
 
 app = module.exports = express.createServer()
+
 app.configure ->
   app.set "views", __dirname + "/views"
   app.set "view engine", "jade"
@@ -17,6 +18,7 @@ app.configure ->
   app.use express.methodOverride()
   app.use app.router
   app.use express.static(__dirname + "/public")
+  app.enable "jsonp callback"
 
 app.configure "development", ->
   app.use express.errorHandler(

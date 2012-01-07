@@ -42,6 +42,9 @@ app.get "/api/points", getPgClient, routes.points
 
 app.get "/api/points/:id", getPgClient, routes.points
 
+app.get "/api/cities", getPgClient, routes.cities
+app.get "/api/cities/:name", getPgClient, routes.cities
+
 app.get "/api/ways", routes.ways
 
 app.get "/api/ways/:id", routes.ways

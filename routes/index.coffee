@@ -1,34 +1,48 @@
 pg = require("pg")
-rel = require("rel")
+
+
+polygonQuery = ->
+    "SELECT ST_AsGeoJSON(way) AS json
+     FROM  planet_osm_polygon
+    "
+
+citiesFilter = () ->
+    "WHERE boundary = 'administrative'
+    "
+
+cityNameFilter =  (name) ->
+    citiesFilter() +
+    "AND name = '" + name + "'
+    "
 
 exports.index = (req, res) ->
   res.render 'index', { title: "Express" }
 
-
-points = new rel.Table "planet_osm_point"
-
-polygons = new rel.Table "planet_osm_polygon"
-
 exports.points = (req, res, next) ->
-  pointQuery = points.project rel.star()
-  if req.params.id?
-    pointQuery.where (points.column "osm_id").eq parseInt req.params.id
-
-  req.client.query pointQuery.toSql(), (error, results) ->
+  req.client.query "SELECT ST_AsGeoJSON(way) FROM  planet_osm_point", (error, results) ->
     if error
       next error
     else
       res.send results
 
 exports.polygons = (req, res, next) ->
-  polygonsQuery = polygons.project (polygons.column "way").asGeoJSON()
-  if req.params.id?
-    polygonsQuery.where (polygons.column "osm_id").eq(parseInt req.params.id)
-
-  console.log polygonsQuery.toSql()
-  req.client.query polygonsQuery.toSql(), (error, results) ->
+  req.client.query polygonQuery, (error, results) ->
     if error
       next error
     else
       res.send results
+
+exports.cities = (req, res, next) ->
+    if req.params.name
+        queryAndWrite (polygonQuery() + cityNameFilter(req.params.name)),req , res, next
+    else
+        queryAndWrite (polygonQuery() + citiesFilter(req.params.name)),req , res, next
+
+queryAndWrite = (query,req,res,next) ->
+    req.client.query query, (error, results) ->
+        if error
+            next error
+        else
+            for x in results.rows
+                res.send "{ type: 'Feature', geometry: " + x.json + " } "
 

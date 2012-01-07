@@ -43,6 +43,15 @@ queryAndWrite = (query,req,res,next) ->
         if error
             next error
         else
-            for x in results.rows
-                res.send "{ type: 'Feature', geometry: " + x.json + " } "
+            res.send featureCollectionFromRows query.rows
 
+featureCollectionFromRows = (rows) ->
+    list = []
+    for row in rows
+        geoJson = JSON.parse(row.json)
+        list.push { type: 'Feature', geometry: geoJson }
+
+    collection = {
+        type: 'FeatureCollection',
+        features: list
+    }

@@ -6,7 +6,7 @@
 ## Requirements
 
 ---
-## Data formats
+## OSM data formats
 
 * XML
 * Protobuffer
@@ -51,3 +51,11 @@
 ## Example Queries
 
     paste some shit here
+
+---
+
+## GEOJson
+
+* explain the geometry types and features/featureCollection
+
+---

@@ -37,6 +37,7 @@ getPgClient = (req, res, next) ->
 
 
 app.get "/", routes.index
+app.get "/overlay", routes.overlay
 
 #app.get "/api/points", getPgClient, routes.points
 #app.get "/api/points/:id", getPgClient, routes.points

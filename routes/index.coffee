@@ -37,7 +37,10 @@ exports.whereName =  (req, res, next) ->
 
 
 exports.index = (req, res) ->
-  res.render 'index', { title: "Express" }
+  res.render 'index', { title: "A map of cities" }
+
+exports.overlay = (req, res) ->
+  res.render 'overlay', { title: "Overlay to city maps" }
 
 exports.points = (req, res, next) ->
   req.client.query "SELECT ST_AsGeoJSON(way) FROM  planet_osm_point", (error, results) ->

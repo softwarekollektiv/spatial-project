@@ -175,7 +175,7 @@
 
 # Architecture
 
-
+<img src="image/arch.svg" width=100% />
 
 ---
 

@@ -39,11 +39,16 @@ getPgClient = (req, res, next) ->
 app.get "/", routes.index
 app.get "/overlay", routes.overlay
 
+app.get "/voronoi", routes.voronoi
+
 #app.get "/api/points", getPgClient, routes.points
 #app.get "/api/points/:id", getPgClient, routes.points
 
 app.get "/api/cities", getPgClient, r.select, r.from, r.whereBoundary, routes.cities
 app.get "/api/cities/:name", getPgClient, r.select, r.from, r.whereBoundary, r.whereName, routes.cities
+
+app.get "/api/pubs", getPgClient, routes.pubs
+
 
 #app.get "/api/ways", routes.ways
 #app.get "/api/ways/:id", routes.ways

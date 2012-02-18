@@ -42,6 +42,15 @@ exports.index = (req, res) ->
 exports.overlay = (req, res) ->
   res.render 'overlay', { title: "Overlay to city maps" }
 
+exports.voronoi = (req, res) ->
+  res.render 'voronoi', { title: "Voronoi for pubs" }
+
+exports.pubs = (req, res, next) ->
+  req.client.query "SELECT X(ST_Transform(way, 4326)) AS x, Y(ST_Transform(way, 4326)) AS y, name FROM planet_osm_point WHERE amenity = 'pub';", (error, results) ->
+    if error then next error
+    else
+      res.send results
+
 exports.points = (req, res, next) ->
   req.client.query "SELECT ST_AsGeoJSON(way) FROM  planet_osm_point", (error, results) ->
     if error

@@ -103,8 +103,11 @@
 # Database schema
 
 * rendering schema
-* shema:
-    * TODO: add shema here
+* schema:
+    * planet_osm_polygon
+        * planet_osm_polygon(bigint osm_id, geometry way, text tag0, ...)
+    * planet_osm_point, planet_osm_line, planet_osm_roads
+
 
 ---
 # Part 4
@@ -122,14 +125,14 @@
 ## extraction of contour
 * straight forward (select from table)
 * transform to usefull projection
-* output readable for display (GeoJson)
+* output as GEOJson
 
 
 ## Example: Extract contour of Berlin
 
     !sql
-    SELECT ST_asGeoJson(ST_Transform(way,4326))
-    FROM plante_osm_polygon
+    SELECT ST_AsGEOJson(ST_Transform(way,4326))
+    FROM planet_osm_polygon
     WHERE boundary = 'administrative' and name = 'berlin'
 
 
@@ -143,8 +146,8 @@
 ## Example: Compute centroid of Berlin
 
     !sql
-    SELECT ST_asGeoJson(ST_Transform(ST_Centroid(way),4326))
-    FROM plante_osm_polygon
+    SELECT ST_AsGEOJson(ST_Transform(ST_Centroid(way),4326))
+    FROM planet_osm_polygon
     WHERE boundary = 'administrative' and name = 'berlin'
 
 ---
@@ -154,8 +157,8 @@
 
 ## Example: Compute area of Berlin
     !sql
-    SELECT ST_Area(Geography(ST_Transform(way)))
-    FROM plante_osm_polygon
+    SELECT ST_Area(Geography(ST_Transform(way, 4326)))
+    FROM planet_osm_polygon
     WHERE boundary = 'administrative' and name = 'berlin'
 
 
@@ -168,43 +171,92 @@
 * compute centroid and contour
 * **overlay maps**
 
+---
 
+# Architecture
 
 
 
 ---
-# Software stack
+
+# Software stack (server)
 
 * node.js
-* express (http framework)
+* express
+    * http framework
 * (node-)postgres
+    * storage
 * postgis
 
-* leaflet (slippy map/rendering)
+
+---
+# Software stack (client)
+
+* leaflet
+    * slippy map
+    * rendering
+* jquery
+    * ajax requests
 
 ---
 
-## Wtf is node.js
+# Application
+
+---
+
+#API
+
+`GET /api/cities/:name`
 
     !javascript
-    eventEmitter.on('aTinyEvent', function(event) { });
+    {
+        'type': 'FeatureCollection',
+        'features': [
+            {
+                'type': 'Feature',
+                'geometry': geoJsonGeometry,
+                'properties': {
+                    'name': 'Berlin',
+                    'centroid': geoJsonGeometry,
+                    'area': 1234
+                }
+            }
+        ]
+    }
 
 ---
 
+#API (overlay)
 
+`GET /api/cities/:name?translate=0,0`
 
-## Application
+    !javascript
+    {
+        'type': 'FeatureCollection',
+        'features': [
+            {
+                'type': 'Feature',
+                'geometry': translatedGeoJsonGeometry,
+                'properties': {
+                    'name': 'Berlin',
+                    'centroid': geoJsonGeometry,
+                    'area': 1234
+                }
+            }
+        ]
+    }
 
 ---
 
-## Example Queries
+# GEOJson Geometry
 
-    paste some shit here
-
----
-
-## GEOJson
-
-* explain the geometry types and features/featureCollection
+    !javascript
+    { 
+        "type": "Polygon",
+        "coordinates": [
+            [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0] ],
+            [ [100.2, 0.2], [100.8, 0.2], [100.8, 0.8], [100.2, 0.8], [100.2, 0.2] ]
+        ]
+    }
 
 ---

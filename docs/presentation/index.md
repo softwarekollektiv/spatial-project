@@ -1,4 +1,4 @@
-# Spatial project
+# Spatial databases: Project
 
 Yves Müller (uves@spline.de)
 

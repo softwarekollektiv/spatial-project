@@ -179,7 +179,7 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
 
 # Architecture
 
-<img src="image/arch.svg" width=100% />
+<img src='image/arch.svg' alt='spline logo' width='100%' align='center'>
 
 ---
 

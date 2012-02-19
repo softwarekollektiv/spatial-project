@@ -1,5 +1,9 @@
 # Spatial project
 
+Yves Müller (uves@spline.de)
+
+Philipp Borgers (borgers@mi.fu-berlin.de)
+
 ---
 # Requirements
 

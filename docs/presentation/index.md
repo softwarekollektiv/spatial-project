@@ -21,10 +21,6 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
 * overlay maps
 
 ---
-# Let's get coding done
-
-
----
 # Part 1
 
 * **fetch osm data**
@@ -204,7 +200,7 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
 
 ---
 
-# Application
+# Implmentation
 
 ---
 
@@ -264,3 +260,8 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
     }
 
 ---
+# Live demo
+
+
+---
+# The end

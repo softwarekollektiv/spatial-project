@@ -43,6 +43,14 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
     * but different structure
 
 ---
+
+# Why did we use the XML Format?
+
+* we have mirroed these files at [spline](http://ftp.spline.inf.fu-berlin.de/pub/openstreetmap)
+* our import tool works best with it
+* pbf was not offerd by extractotron (see below)
+
+---
 # Elementary Objects
 
 * nodes
@@ -68,6 +76,13 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
 * convert data to PostGIS
 * compute centroid and contour
 * overlay maps
+---
+# First approach: Extract vom planet dump
+
+* very time consuming
+    * importing data for europe takes around 1,5 weeks
+    * filtering citydata will be of same magnitude
+
 ---
 # Extractotron
 
@@ -98,6 +113,9 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
 * osm2pgsql
     * output suitable for rendering
     * written in c
+* '' we used osm2pgsql ''
+    * simpler
+    * faster
 
 ---
 # Database schema
@@ -107,6 +125,7 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
     * planet_osm_polygon
         * planet_osm_polygon(bigint osm_id, geometry way, text tag0, ...)
     * planet_osm_point, planet_osm_line, planet_osm_roads
+* polygon is of most intrest for us, because city boundries are stored in this tabel
 
 
 ---
@@ -126,6 +145,7 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
 * straight forward (select from table)
 * transform to usefull projection
 * output as GEOJson
+* (berlin is replaced with the city given by the client)
 
 
 ## Example: Extract contour of Berlin
@@ -147,6 +167,23 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
 
     !sql
     SELECT ST_AsGEOJson(ST_Transform(ST_Centroid(way),4326))
+    FROM planet_osm_polygon
+    WHERE boundary = 'administrative' and name = 'berlin'
+
+---
+# Computation in PostGIS (cont'd)
+
+## translation of a polygon
+* x and y given by the client (could be centroid of another city)
+* there maybe to many ST_Transformation calls in this code
+
+## Example:
+    !sql
+    ST_AsGeoJSON(ST_Translate(
+        ST_Transform(way,4326),
+            #{x}-ST_X(ST_Transform(ST_Centroid(way),4326)),
+            #{y}-ST_Y(ST_Transform(ST_Centroid(way),4326))
+        ))
     FROM planet_osm_polygon
     WHERE boundary = 'administrative' and name = 'berlin'
 
@@ -175,7 +212,7 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
 
 # Architecture
 
-<img src='image/arch.svg' alt='spline logo' width='100%' align='center'>
+![architecture](image/arch.png)
 
 ---
 
@@ -199,12 +236,18 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
     * ajax requests
 
 ---
+# Why didn't we use qgis?
 
-# Implmentation
+* we wanted to do something different
+* coding js is a great fun for us
 
 ---
 
-#API
+# Implementation
+
+---
+
+#API (REST-Endpoints and thier return values)
 
 `GET /api/cities/:name`
 
@@ -217,7 +260,7 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
                 'geometry': geoJsonGeometry,
                 'properties': {
                     'name': 'Berlin',
-                    'centroid': geoJsonGeometry,
+                    'centroid': <geoJsonGeometry>,
                     'area': 1234
                 }
             }
@@ -236,10 +279,10 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
         'features': [
             {
                 'type': 'Feature',
-                'geometry': translatedGeoJsonGeometry,
+                'geometry': <translatedGeoJsonGeometry>,
                 'properties': {
                     'name': 'Berlin',
-                    'centroid': geoJsonGeometry,
+                    'centroid': <geoJsonGeometry>,
                     'area': 1234
                 }
             }
@@ -251,7 +294,7 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
 # GEOJson Geometry
 
     !javascript
-    { 
+    {
         "type": "Polygon",
         "coordinates": [
             [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0] ],
@@ -261,6 +304,13 @@ Philipp Borgers (borgers@mi.fu-berlin.de)
 
 ---
 # Live demo
+
+---
+# Things that are missing
+
+* we need a nice interface for the client
+* queries to the http api should be dynamic not static
+    * means based on user input, not hardcoded
 
 
 ---
